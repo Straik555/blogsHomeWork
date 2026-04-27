@@ -43,5 +43,5 @@ export const createPostHandler = (
 
   postsRepository.create(newPost);
 
-  res.sendStatus(HTTP_STATUS.CREATED_201);
+  res.status(HTTP_STATUS.CREATED_201).json(newPost);
 };
