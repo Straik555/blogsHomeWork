@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import { HTTP_STATUS } from "../../core/types/http-status.type";
-import { appConfig } from "../../core/config/app.config";
 
 export const authGuard = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization as string;
@@ -20,10 +19,7 @@ export const authGuard = (req: Request, res: Response, next: NextFunction) => {
   const credential = Buffer.from(token, "base64").toString("utf-8");
   const [userName, password] = credential.split(":");
 
-  if (
-    userName !== appConfig.ADMIN_USERNAME ||
-    password !== appConfig.ADMIN_PASSWORD
-  ) {
+  if (userName !== "admin" || password !== "qwerty") {
     res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401);
     return;
   }

@@ -1,9 +1,8 @@
 import express from "express";
 import { setupApp } from "./setup-app";
-import { appConfig } from "./core/config/app.config";
 
 const app = express();
-const PORT = appConfig.PORT;
+const PORT = 3003;
 
 setupApp(app);
 
