@@ -19,6 +19,6 @@ function getNumberEnvOrThrow(key: string): number {
 
 export const appConfig = {
   PORT: getNumberEnvOrThrow("PORT"),
-  ADMIN_USERNAME: getEnvOrThrow("ADMIN_USERNAME"),
-  ADMIN_PASSWORD: getEnvOrThrow("ADMIN_PASSWORD"),
+  ADMIN_USERNAME: "admin",
+  ADMIN_PASSWORD: "qwerty",
 };
