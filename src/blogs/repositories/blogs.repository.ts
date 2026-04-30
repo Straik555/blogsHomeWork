@@ -20,7 +20,7 @@ export const blogsRepository = {
       {
         $set: {
           name: updateBlog.name,
-          createdAt: updateBlog.createdAt,
+          createdAt: new Date().toISOString(),
           description: updateBlog.description,
           websiteUrl: updateBlog.websiteUrl,
           isMembership: false,

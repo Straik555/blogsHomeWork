@@ -23,7 +23,6 @@ export const postsRepository = {
           blogName: updatePosts.blogName,
           content: updatePosts.content,
           createdAt: updatePosts.createdAt,
-          isMembership: updatePosts.isMembership,
           title: updatePosts.title,
           shortDescription: updatePosts.shortDescription,
         },

@@ -9,7 +9,6 @@ export const mapToPostViewModelUtil = (
     id: post._id.toString(),
     shortDescription: post.shortDescription,
     title: post.title,
-    isMembership: post.isMembership,
     createdAt: post.createdAt,
     content: post.content,
     blogId: post.blogId,

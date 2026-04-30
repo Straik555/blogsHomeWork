@@ -34,7 +34,6 @@ export const createPostHandler = async (
     const newPost: PostsType = {
       ...body,
       createdAt: new Date(),
-      isMembership: false,
       blogName: foundBlog.name,
     };
 
