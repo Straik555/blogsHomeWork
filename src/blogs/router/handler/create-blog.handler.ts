@@ -15,7 +15,9 @@ export const createBlogHandler = async (
     const { body } = req;
 
     const blog: BlogsType = {
-      ...body,
+      websiteUrl: body.websiteUrl,
+      name: body.name,
+      description: body.description,
       createdAt: new Date(),
       isMembership: false,
     };
