@@ -1,13 +1,17 @@
 import { Request, Response } from "express";
-import { BlogsType } from "../../types/blogs.type";
 import { blogsRepository } from "../../repositories/blogs.repository";
 import { HTTP_STATUS } from "../../../core/types/http-status.type";
+import { BlogsViewModel } from "../../types/model/blogs-view.model";
+import { mapToBlogViewModelUtil } from "../mappers/map-to-blog-view-model.util";
 
-export const getBlogsListHandler = (
+export const getBlogsListHandler = async (
   req: Request,
-  res: Response<BlogsType[]>,
+  res: Response<BlogsViewModel[]>,
 ) => {
-  const blogs: BlogsType[] = blogsRepository.getAll();
+  const blogsList = await blogsRepository.getAll();
+  const blogsViewModel: BlogsViewModel[] = blogsList.map((blog) =>
+    mapToBlogViewModelUtil(blog),
+  );
 
-  res.status(HTTP_STATUS.OK_200).send(blogs);
+  res.status(HTTP_STATUS.OK_200).send(blogsViewModel);
 };

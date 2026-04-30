@@ -4,44 +4,46 @@ import { PostViewModel } from "../../types/model/post-view.model";
 import { PostsType } from "../../types/posts.type";
 import { ErrorsResponse } from "../../../core/types/error.type";
 import { postsRepository } from "../../repositories/posts.repository";
-import { db } from "../../../db/db";
 import { HTTP_STATUS } from "../../../core/types/http-status.type";
 import { createErrorMessage } from "../../../core/middleware/validation/input-validation.middleware";
 import { errorMessage } from "../../../core/utils/errorMessage.utils";
 import { blogsRepository } from "../../../blogs/repositories/blogs.repository";
-import { BlogsType } from "../../../blogs/types/blogs.type";
+import { PostInputDtoType } from "../../dto/post-input.dto";
+import { mapToPostViewModelUtil } from "../mappers/map-to-post-view-model.util";
 
-export const createPostHandler = (
-  req: RequestWithBody<PostViewModel>,
-  res: Response<PostsType | ErrorsResponse>,
+export const createPostHandler = async (
+  req: RequestWithBody<PostInputDtoType>,
+  res: Response<PostViewModel | ErrorsResponse>,
 ) => {
-  const { body } = req;
+  try {
+    const { body } = req;
 
-  const id: string = String(
-    db.posts.length ? +db.posts[db.posts.length - 1].id + 1 : 1,
-  );
+    const foundBlog = await blogsRepository.getById(body.blogId);
+    console.log(foundBlog);
+    if (!foundBlog) {
+      res.status(HTTP_STATUS.NOT_FOUND_404).send(
+        createErrorMessage([
+          {
+            field: "id",
+            message: errorMessage.notFound("id", "blog"),
+          },
+        ]),
+      );
+      return;
+    }
 
-  const findBlog: BlogsType | null = blogsRepository.getById(body.blogId);
+    const newPost: PostsType = {
+      ...body,
+      createdAt: new Date(),
+      isMembership: false,
+      blogName: foundBlog.name,
+    };
 
-  if (!findBlog) {
-    res.status(HTTP_STATUS.NOT_FOUND_404).send(
-      createErrorMessage([
-        {
-          field: "id",
-          message: errorMessage.notFound("id", "blog"),
-        },
-      ]),
-    );
-    return;
+    const newPostCreated = await postsRepository.create(newPost);
+
+    const postResult = mapToPostViewModelUtil(newPostCreated);
+    res.status(HTTP_STATUS.CREATED_201).json(postResult);
+  } catch (error) {
+    res.sendStatus(HTTP_STATUS.INTERNAL_SERVER_ERROR_500);
   }
-
-  const newPost: PostsType = {
-    id: id,
-    blogName: findBlog.name,
-    ...body,
-  };
-
-  postsRepository.create(newPost);
-
-  res.status(HTTP_STATUS.CREATED_201).json(newPost);
 };

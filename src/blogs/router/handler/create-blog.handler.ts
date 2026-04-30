@@ -2,25 +2,30 @@ import { Response } from "express";
 import { RequestWithBody } from "../../../core/types/request-general.type";
 import { BlogsViewModel } from "../../types/model/blogs-view.model";
 import { BlogsType } from "../../types/blogs.type";
-import { db } from "../../../db/db";
 import { blogsRepository } from "../../repositories/blogs.repository";
 import { HTTP_STATUS } from "../../../core/types/http-status.type";
+import { WithId } from "mongodb";
+import { mapToBlogViewModelUtil } from "../mappers/map-to-blog-view-model.util";
 
-export const createBlogHandler = (
-  req: RequestWithBody<BlogsViewModel>,
-  res: Response<BlogsType>,
+export const createBlogHandler = async (
+  req: RequestWithBody<BlogsType>,
+  res: Response<BlogsViewModel>,
 ) => {
-  const { body } = req;
+  try {
+    const { body } = req;
 
-  const id: string = String(
-    db.blogs.length ? +db.blogs[db.blogs.length - 1].id + 1 : 1,
-  );
+    const blog: BlogsType = {
+      ...body,
+      createdAt: new Date(),
+      isMembership: false,
+    };
+    const newBlogCreated: WithId<BlogsType> =
+      await blogsRepository.create(blog);
 
-  const newBlog = {
-    id,
-    ...body,
-  };
+    const blogResult: BlogsViewModel = mapToBlogViewModelUtil(newBlogCreated);
 
-  blogsRepository.create(newBlog);
-  res.status(HTTP_STATUS.CREATED_201).json(newBlog);
+    res.status(HTTP_STATUS.CREATED_201).json(blogResult);
+  } catch (error) {
+    res.sendStatus(HTTP_STATUS.INTERNAL_SERVER_ERROR_500);
+  }
 };
