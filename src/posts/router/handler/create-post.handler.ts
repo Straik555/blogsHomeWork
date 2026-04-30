@@ -19,7 +19,6 @@ export const createPostHandler = async (
     const { body } = req;
 
     const foundBlog = await blogsRepository.getById(body.blogId);
-    console.log(foundBlog);
     if (!foundBlog) {
       res.status(HTTP_STATUS.NOT_FOUND_404).send(
         createErrorMessage([

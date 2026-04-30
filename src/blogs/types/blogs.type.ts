@@ -2,6 +2,6 @@ export type BlogsType = {
   name: string;
   description: string;
   websiteUrl: string;
-  createdAt: null;
+  createdAt: string;
   isMembership: boolean;
 };
