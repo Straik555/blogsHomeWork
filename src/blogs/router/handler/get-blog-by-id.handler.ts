@@ -16,7 +16,7 @@ export const getBlogByIdHandler = async (
   try {
     const { id } = req.params;
     const foundBlog = await blogsRepository.getById(id);
-    console.log(foundBlog);
+
     if (!foundBlog) {
       res.status(HTTP_STATUS.NOT_FOUND_404).send(
         createErrorMessage([
