@@ -1,6 +1,7 @@
 import { PostsType } from "../types/posts.type";
 import { ObjectId, WithId } from "mongodb";
 import { postsCollection } from "../../db/mongo.db";
+import { PostInputDtoType } from "../dto/post-input.dto";
 
 export const postsRepository = {
   getAll: async (): Promise<WithId<PostsType>[]> =>
@@ -14,15 +15,13 @@ export const postsRepository = {
       _id: insertResult.insertedId,
     };
   },
-  update: async (id: string, updatePosts: PostsType): Promise<void> => {
+  update: async (id: string, updatePosts: PostInputDtoType): Promise<void> => {
     const updateResult = await postsCollection.updateOne(
       { _id: new ObjectId(id) },
       {
         $set: {
           blogId: updatePosts.blogId,
-          blogName: updatePosts.blogName,
           content: updatePosts.content,
-          createdAt: updatePosts.createdAt,
           title: updatePosts.title,
           shortDescription: updatePosts.shortDescription,
         },

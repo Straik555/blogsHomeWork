@@ -1,6 +1,7 @@
 import { BlogsType } from "../types/blogs.type";
 import { ObjectId, WithId } from "mongodb";
 import { blogsCollection } from "../../db/mongo.db";
+import { BlogInputDtoType } from "../dbo/blog-input.dto";
 
 export const blogsRepository = {
   getAll: async (): Promise<WithId<BlogsType>[]> =>
@@ -14,16 +15,14 @@ export const blogsRepository = {
       _id: insertResult.insertedId,
     };
   },
-  update: async (id: string, updateBlog: BlogsType): Promise<void> => {
+  update: async (id: string, updateBlog: BlogInputDtoType): Promise<void> => {
     const updateResult = await blogsCollection.updateOne(
       { _id: new ObjectId(id) },
       {
         $set: {
           name: updateBlog.name,
-          createdAt: updateBlog.createdAt,
           description: updateBlog.description,
           websiteUrl: updateBlog.websiteUrl,
-          isMembership: false,
         },
       },
     );

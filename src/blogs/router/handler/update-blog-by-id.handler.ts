@@ -3,14 +3,14 @@ import { RequestWithParamsAndBody } from "../../../core/types/request-general.ty
 import { UriParamsById } from "../../../core/types/uri-params-by-id.type";
 import { BlogsViewModel } from "../../types/model/blogs-view.model";
 import { ErrorsResponse } from "../../../core/types/error.type";
-import { BlogsType } from "../../types/blogs.type";
 import { blogsRepository } from "../../repositories/blogs.repository";
 import { HTTP_STATUS } from "../../../core/types/http-status.type";
 import { createErrorMessage } from "../../../core/middleware/validation/input-validation.middleware";
 import { errorMessage } from "../../../core/utils/errorMessage.utils";
+import { BlogInputDtoType } from "../../dbo/blog-input.dto";
 
 export const updateBlogByIdHandler = async (
-  req: RequestWithParamsAndBody<UriParamsById, BlogsType>,
+  req: RequestWithParamsAndBody<UriParamsById, BlogInputDtoType>,
   res: Response<BlogsViewModel | ErrorsResponse>,
 ) => {
   try {
