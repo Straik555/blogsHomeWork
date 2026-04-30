@@ -32,6 +32,6 @@ export const deletePostByIdHandler = async (
     await postsRepository.delete(id);
     res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
   } catch (error) {
-    res.sendStatus(HTTP_STATUS.INTERNAL_SERVER_ERROR_500);
+    res.sendStatus(HTTP_STATUS.NOT_FOUND_404);
   }
 };

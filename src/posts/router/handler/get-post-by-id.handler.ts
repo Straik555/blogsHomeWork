@@ -37,6 +37,6 @@ export const getPostByIdHandler = async (
 
     res.status(HTTP_STATUS.OK_200).send(postResult);
   } catch (error) {
-    res.sendStatus(HTTP_STATUS.INTERNAL_SERVER_ERROR_500);
+    res.sendStatus(HTTP_STATUS.NOT_FOUND_404);
   }
 };

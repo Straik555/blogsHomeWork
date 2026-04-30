@@ -42,6 +42,6 @@ export const createPostHandler = async (
     const postResult = mapToPostViewModelUtil(newPostCreated);
     res.status(HTTP_STATUS.CREATED_201).json(postResult);
   } catch (error) {
-    res.sendStatus(HTTP_STATUS.INTERNAL_SERVER_ERROR_500);
+    res.sendStatus(HTTP_STATUS.NOT_FOUND_404);
   }
 };
