@@ -5,4 +5,5 @@ export const paramsIdValidationMiddleware = param("id")
   .withMessage("Id is required")
   .isString()
   .withMessage("Id must be a string")
-  .trim();
+  .isMongoId()
+  .withMessage("Incorrect format of ObjectId");

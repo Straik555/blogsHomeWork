@@ -1,6 +1,7 @@
 export type BlogsType = {
-  id: string;
   name: string;
   description: string;
   websiteUrl: string;
+  createdAt: Date;
+  isMembership: boolean;
 };

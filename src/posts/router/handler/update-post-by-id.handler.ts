@@ -9,48 +9,38 @@ import { createErrorMessage } from "../../../core/middleware/validation/input-va
 import { errorMessage } from "../../../core/utils/errorMessage.utils";
 import { postsRepository } from "../../repositories/posts.repository";
 import { blogsRepository } from "../../../blogs/repositories/blogs.repository";
-import { BlogsType } from "../../../blogs/types/blogs.type";
 
-export const updatePostByIdHandler = (
+export const updatePostByIdHandler = async (
   req: RequestWithParamsAndBody<UriParamsById, PostViewModel>,
-  res: Response<PostsType | ErrorsResponse>,
+  res: Response<PostViewModel | ErrorsResponse>,
 ) => {
-  const { id } = req.params;
-  const { body } = req;
+  try {
+    const { id } = req.params;
+    const { body } = req;
 
-  const findBlog: BlogsType | null = blogsRepository.getById(body.blogId);
+    const foundBlog = await blogsRepository.getById(body.blogId);
 
-  if (!findBlog) {
-    res.status(HTTP_STATUS.NOT_FOUND_404).send(
-      createErrorMessage([
-        {
-          field: "blogId",
-          message: errorMessage.notFound("id", "blog"),
-        },
-      ]),
-    );
-    return;
+    if (!foundBlog) {
+      res.status(HTTP_STATUS.NOT_FOUND_404).send(
+        createErrorMessage([
+          {
+            field: "blogId",
+            message: errorMessage.notFound("id", "blog"),
+          },
+        ]),
+      );
+      return;
+    }
+
+    const newPost: PostsType = {
+      ...body,
+      blogName: foundBlog.name,
+    };
+
+    await postsRepository.update(id, newPost);
+
+    res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
+  } catch (error) {
+    res.sendStatus(HTTP_STATUS.INTERNAL_SERVER_ERROR_500);
   }
-
-  const newPost: Omit<PostsType, "id"> = {
-    ...body,
-    blogName: findBlog.name,
-    blogId: findBlog.id,
-  };
-
-  const updatePost: PostsType | null = postsRepository.update(id, newPost);
-
-  if (!updatePost) {
-    res.status(HTTP_STATUS.NOT_FOUND_404).send(
-      createErrorMessage([
-        {
-          field: "id",
-          message: errorMessage.notFound("id", "post"),
-        },
-      ]),
-    );
-    return;
-  }
-
-  res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
 };

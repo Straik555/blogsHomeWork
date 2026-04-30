@@ -1,38 +1,49 @@
-import { db } from "../../db/db";
 import { PostsType } from "../types/posts.type";
+import { ObjectId, WithId } from "mongodb";
+import { postsCollection } from "../../db/mongo.db";
 
 export const postsRepository = {
-  getAll: (): PostsType[] => db.posts,
-  getById: (id: string): PostsType | null =>
-    db.posts.find((post) => post.id === id) ?? null,
-  create: (newPost: PostsType): PostsType => {
-    db.posts.push(newPost);
-    return newPost;
+  getAll: async (): Promise<WithId<PostsType>[]> =>
+    await postsCollection.find().toArray(),
+  getById: async (id: string): Promise<WithId<PostsType> | null> =>
+    (await postsCollection.findOne({ _id: new ObjectId(id) })) ?? null,
+  create: async (newPost: PostsType): Promise<WithId<PostsType>> => {
+    const insertResult = await postsCollection.insertOne(newPost);
+    return {
+      ...newPost,
+      _id: insertResult.insertedId,
+    };
   },
-  update: (
-    id: string,
-    updatePosts: Omit<PostsType, "id">,
-  ): PostsType | null => {
-    const findPosts: PostsType | null = postsRepository.getById(id);
+  update: async (id: string, updatePosts: PostsType): Promise<void> => {
+    const updateResult = await postsCollection.updateOne(
+      { _id: new ObjectId(id) },
+      {
+        $set: {
+          blogId: updatePosts.blogId,
+          blogName: updatePosts.blogName,
+          content: updatePosts.content,
+          createdAt: updatePosts.createdAt,
+          isMembership: updatePosts.isMembership,
+          title: updatePosts.title,
+          shortDescription: updatePosts.shortDescription,
+        },
+      },
+    );
 
-    if (findPosts) {
-      findPosts.title = updatePosts.title;
-      findPosts.shortDescription = updatePosts.shortDescription;
-      findPosts.content = updatePosts.content;
-      findPosts.blogId = updatePosts.blogId;
-      findPosts.blogName = updatePosts.blogName;
+    if (updateResult.matchedCount === 0) {
+      throw new Error("Post not found");
+    }
+    return;
+  },
+  delete: async (id: string): Promise<void> => {
+    const deleteResult = await postsCollection.deleteOne({
+      _id: new ObjectId(id),
+    });
+
+    if (deleteResult.deletedCount === 0) {
+      throw new Error("Post not found");
     }
 
-    return findPosts;
-  },
-  delete: (id: string): boolean => {
-    const findIndex = db.posts.findIndex((post) => post.id === id);
-
-    if (findIndex === -1) {
-      return false;
-    }
-
-    db.posts.splice(findIndex, 1);
-    return true;
+    return;
   },
 };

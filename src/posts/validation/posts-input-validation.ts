@@ -24,7 +24,9 @@ const contentValidation = body("content")
 
 const blogIdValidation = body("blogId")
   .isString()
-  .withMessage(errorMessage.isRequired("blogId"));
+  .withMessage(errorMessage.isRequired("blogId"))
+  .isMongoId()
+  .withMessage("Incorrect format of ObjectId");
 
 export const postsInputValidation = [
   titleValidation,
