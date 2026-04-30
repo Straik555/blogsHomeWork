@@ -50,7 +50,8 @@ export const updatePostByIdHandler = async (
   } catch (error) {
     if (error === "Post not found") {
       res.sendStatus(HTTP_STATUS.NOT_FOUND_404);
+    } else {
+      res.sendStatus(HTTP_STATUS.INTERNAL_SERVER_ERROR_500);
     }
-    res.sendStatus(HTTP_STATUS.INTERNAL_SERVER_ERROR_500);
   }
 };
