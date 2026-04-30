@@ -18,7 +18,7 @@ export const createBlogHandler = async (
       websiteUrl: body.websiteUrl,
       name: body.name,
       description: body.description,
-      createdAt: new Date().toISOString(),
+      createdAt: null,
       isMembership: false,
     };
     const newBlogCreated: WithId<BlogsType> =
